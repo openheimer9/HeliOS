@@ -1,5 +1,7 @@
 # 🚀 Deployment Guide - HELIOS AEO
 
+**For quick step-by-step instructions, see [DEPLOYMENT_STEPS.md](./DEPLOYMENT_STEPS.md)**
+
 Complete guide for deploying the frontend to Vercel and backend to Render via GitHub.
 
 ---
