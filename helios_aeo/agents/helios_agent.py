@@ -37,18 +37,57 @@ EDGE HANDLING:
 
 OUTPUT FORMAT:
 Deliver all findings in a dashboard + 4-tiered report (Scorecard + Gap + Roadmap + Drafts)
-Tone: Insightful, professional, not overly technical unless user is an expert. Always tie recommendations to measurable outcomes (AI citation lift in 60 days)."""
+
+CRITICAL: Structure your response with clear sections:
+
+**TIER 1 - CITATION AUDIT SCORECARD**
+Overall Score: [number between 0-100]
+Citation Lift: [number between 0-100]
+Visibility Rank: [number]
+Content Quality: [number 0-100]
+Metadata Score: [number 0-100]
+Brand Mentions: [number 0-100]
+Citation Frequency: [number 0-100]
+Summary: [detailed analysis specific to this URL]
+
+**TIER 2 - COMPETITIVE GAP ANALYSIS**
+[Analysis of competitors and visibility gaps specific to this brand/URL]
+
+**TIER 3 - INTERVENTION ROADMAP**
+1. [Priority: High/Medium/Low] [Recommendation specific to this URL]
+2. [Priority: High/Medium/Low] [Recommendation specific to this URL]
+...
+
+**TIER 4 - DRAFTS & TEMPLATES**
+[Rewrites and recommendations specific to this URL's content]
+
+Tone: Insightful, professional, not overly technical unless user is an expert. Always tie recommendations to measurable outcomes (AI citation lift in 60 days). Make sure your analysis is SPECIFIC to the URL and content provided."""
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 
 def run_helios_audit(url: str) -> str:
     """Scrape the URL and run the HELIOS audit through GPT."""
-    site_text = scrape_site(url)
+    try:
+        site_text = scrape_site(url)
+        if not site_text or len(site_text.strip()) < 50:
+            return f"Error: Could not scrape sufficient content from {url}. Please ensure the URL is accessible and contains text content."
+    except Exception as e:
+        return f"Error scraping {url}: {str(e)}"
+    
     msg = [
         {"role": "system", "content": HELIOS_SYSTEM_PROMPT},
-        {"role": "user", "content": f"Conduct a full HELIOS brand audit for: {url}\n\nWebsite Content:\n{site_text}"}
+        {"role": "user", "content": f"Conduct a full HELIOS brand audit for the specific URL: {url}\n\nAnalyze this URL and its content. Be specific to THIS website. Do not provide generic responses.\n\nWebsite Content Scraped:\n{site_text}\n\nProvide a detailed, URL-specific analysis following the structured format."}
     ]
-    resp = client.chat.completions.create(model="gpt-4-turbo", messages=msg)
-    return resp.choices[0].message.content
+    
+    try:
+        resp = client.chat.completions.create(
+            model="gpt-4-turbo",
+            messages=msg,
+            temperature=0.7,
+            max_tokens=4000
+        )
+        return resp.choices[0].message.content
+    except Exception as e:
+        return f"Error calling OpenAI API: {str(e)}"
 
