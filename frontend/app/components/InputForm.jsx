@@ -26,10 +26,19 @@ export default function InputForm({ onResults }) {
       const results = await runAudit(url, mode);
       onResults(results);
     } catch (err) {
-      setError(
-        err.response?.data?.detail || "Failed to analyze. Please check your backend connection."
-      );
-      console.error(err);
+      // Handle different error types
+      let errorMessage = "Failed to analyze. Please check your backend connection.";
+      
+      if (err.message) {
+        errorMessage = err.message;
+      } else if (err.response?.data?.detail) {
+        errorMessage = err.response.data.detail;
+      } else       if (err.code === "ERR_NETWORK" || err.message?.includes("Cannot connect")) {
+        errorMessage = err.message || `Cannot connect to backend. Please check:\n1. Backend is running\n2. CORS is configured\n3. Backend URL is correct in Vercel environment variables`;
+      }
+      
+      setError(errorMessage);
+      console.error("Full error:", err);
     } finally {
       setLoading(false);
     }

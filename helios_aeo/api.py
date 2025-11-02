@@ -10,10 +10,11 @@ app = FastAPI(title="HELIOS AEO API", version="1.0.0")
 # CORS middleware
 # Get allowed origins from environment variable or default to allow all in development
 allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "")
-if allowed_origins_env:
+if allowed_origins_env and allowed_origins_env != "*":
     allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",") if origin.strip()]
 else:
-    # Default: allow all in development (update for production!)
+    # Default: allow all (useful for development and initial testing)
+    # For production, set ALLOWED_ORIGINS environment variable with specific frontend URL
     allowed_origins = ["*"]
 
 app.add_middleware(

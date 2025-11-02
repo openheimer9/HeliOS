@@ -181,6 +181,14 @@ Provide a detailed, URL-specific analysis in the JSON format specified. Include 
         
         return result
         
+    except ValueError as ve:
+        # Re-raise ValueError as-is (for scraping errors)
+        raise ve
     except Exception as e:
-        raise Exception(f"Error calling OpenAI API: {str(e)}")
+        # Wrap other exceptions with more context
+        error_msg = str(e)
+        if "Invalid JSON" in error_msg or "JSON" in error_msg:
+            raise ValueError(f"OpenAI returned invalid JSON. Please check API key and model availability. {error_msg}")
+        else:
+            raise Exception(f"Error calling OpenAI API: {error_msg}")
 
