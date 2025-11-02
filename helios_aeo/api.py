@@ -11,19 +11,30 @@ app = FastAPI(title="HELIOS AEO API", version="1.0.0")
 # Get allowed origins from environment variable or default to allow all in development
 allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "")
 if allowed_origins_env and allowed_origins_env != "*":
-    allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",") if origin.strip()]
+    # Split by comma and strip whitespace, also remove trailing slashes
+    allowed_origins = [origin.strip().rstrip('/') for origin in allowed_origins_env.split(",") if origin.strip()]
 else:
     # Default: allow all (useful for development and initial testing)
     # For production, set ALLOWED_ORIGINS environment variable with specific frontend URL
     allowed_origins = ["*"]
 
+# Log CORS configuration for debugging (remove in production if sensitive)
+print(f"CORS configured with allowed_origins: {allowed_origins if allowed_origins != ['*'] else '[ALL]'}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
+
+# Add OPTIONS handler for preflight requests
+@app.options("/{full_path:path}")
+async def options_handler(full_path: str):
+    """Handle OPTIONS preflight requests."""
+    return {"status": "ok"}
 
 
 class AnalyzeRequest(BaseModel):
