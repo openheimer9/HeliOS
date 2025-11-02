@@ -11,10 +11,11 @@ app = FastAPI(title="HELIOS AEO API", version="1.0.0")
 
 # CORS middleware
 # Get allowed origins from environment variable or default to allow all in development
-allowed_origins = os.getenv(
-    "ALLOWED_ORIGINS",
-    "*"  # Default: allow all (change in production)
-).split(",") if os.getenv("ALLOWED_ORIGINS") else ["*"]
+allowed_origins = [
+    "https://heli-os.vercel.app",  # Your frontend
+    "http://localhost:3000",       # Local dev (optional)
+]
+
 
 app.add_middleware(
     CORSMiddleware,
