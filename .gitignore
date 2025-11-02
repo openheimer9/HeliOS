@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp
+.pnp.js
+
+# Environment variables
+.env
+.env.local
+.env*.local
+.env.example
+
+# Config files with secrets (if you add secrets here, ignore the file)
+# helios_aeo/config.py  # Uncomment if you add secrets directly
+*.env
+
+# Config files with sensitive data (if you want to track template only)
+# Keep config.py but it should only use env vars
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Next.js
+.next/
+out/
+.vercel
+
+# Reports
+helios_aeo/reports/
+
+# API Keys (keep config.py but ignore sensitive values)
+# Don't commit actual API keys
+
